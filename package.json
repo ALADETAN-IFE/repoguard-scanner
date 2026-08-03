@@ -35,6 +35,7 @@
     "url": "https://github.com/ALADETAN-IFE/repoguard-scanner/issues"
   },
   "homepage": "https://repoguard.ifecodes.xyz",
+  "license": "MIT",
   "dependencies": {
     "js-yaml": "^4.1.0"
   },
