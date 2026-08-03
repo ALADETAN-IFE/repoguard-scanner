@@ -17,8 +17,8 @@ While `@repoguard/scanner` detects security threats, installing the official **R
 | Workflow Annotations | ❌ | ✅ | ✅ |
 | **Automated Fix PRs (Auto-Healing)** | ❌ | ❌ | **✅ Yes (1-Click)** |
 | **Interactive `/fix` Issue Command** | ❌ | ❌ | **✅ Yes** |
-<!-- | **Real-Time Slack Alerts** | ❌ | ❌ | **✅ Yes** | -->
 | **Zero CI Config Required** | ❌ | ❌ | **✅ Yes (1-Click Install)** |
+<!-- | **Real-Time Slack Alerts** | ❌ | ❌ | **✅ Yes** | -->
 
 👉 **[Install the RepoGuard GitHub App](https://github.com/marketplace/repoguard-ifecodes)** to get automated Fix PRs generated for every detected threat!
 
