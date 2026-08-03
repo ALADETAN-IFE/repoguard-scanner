@@ -27,6 +27,14 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build && npm test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ALADETAN-IFE/repoguard-scanner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ALADETAN-IFE/repoguard-scanner/issues"
+  },
+  "homepage": "https://repoguard.ifecodes.xyz",
   "dependencies": {
     "js-yaml": "^4.1.0"
   },
