@@ -27,7 +27,7 @@ jobs:
     expect(findings.some((f) => f.rule === "workflow-unpinned-action")).toBe(true);
   });
 
-  it("applies .repoguard.yml overrides when scanning with config", () => {
+  it("applies repoguard.yml overrides when scanning with config", () => {
     const code = 'const api_key = "supersecret12345";';
     const config = { rules: { "hardcoded-secret": "off" as const } };
     const findings = scanFileContentWithConfig(code, "src/config.js", config);

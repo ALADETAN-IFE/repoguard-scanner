@@ -1,7 +1,7 @@
 import { parseRepoConfig, applyRepoConfig, UNBYPASSABLE_CRITICAL_RULES } from "../src/config";
 import type { Finding } from "../src/types";
 
-describe("RepoConfig (.repoguard.yml)", () => {
+describe("RepoConfig (repoguard.yml)", () => {
   describe("parseRepoConfig", () => {
     it("parses valid YAML config correctly", () => {
       const yamlContent = `

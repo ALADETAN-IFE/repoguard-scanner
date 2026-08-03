@@ -10,7 +10,7 @@ const SEVERITY_LEVELS: Record<Severity, number> = {
 
 /**
  * Critical malware & remote code execution rules that CANNOT be disabled
- * via .repoguard.yml. This prevents malicious PRs from disabling detection
+ * via repoguard.yml. This prevents malicious PRs from disabling detection
  * rules to sneak malware past RepoGuard.
  */
 export const UNBYPASSABLE_CRITICAL_RULES = new Set([
@@ -29,7 +29,7 @@ export const UNBYPASSABLE_CRITICAL_RULES = new Set([
 ]);
 
 /**
- * Parses raw .repoguard.yml string into a typed RepoConfig object.
+ * Parses raw repoguard.yml string into a typed RepoConfig object.
  * Returns default empty config if parsing fails or input is invalid.
  */
 export function parseRepoConfig(yamlContent: string): RepoConfig {
@@ -49,7 +49,7 @@ export function parseRepoConfig(yamlContent: string): RepoConfig {
 }
 
 /**
- * Applies repository-level configuration (.repoguard.yml) to a list of findings:
+ * Applies repository-level configuration (repoguard.yml) to a list of findings:
  * 1. Disables rules set to "off" (unless the rule is an unbypassable critical rule).
  * 2. Overrides rule severities if configured.
  * 3. Filters out findings in paths specified in config.ignore.paths (excluding critical rules).

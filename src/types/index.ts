@@ -33,7 +33,7 @@ export interface ScanCommitOptions {
   removedFiles?: string[];
 }
 
-// ─── Repository Configuration (.repoguard.yml) ────────────────────────────────
+// ─── Repository Configuration (repoguard.yml) ────────────────────────────────
 
 export interface RepoConfig {
   rules?: Record<string, "off" | "warn" | Severity>;
