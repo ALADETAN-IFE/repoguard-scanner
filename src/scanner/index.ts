@@ -1,6 +1,6 @@
 import type { Finding, ScanRule, ScanCommitOptions, RepoConfig } from "../types";
 import logger from "../utils/logger";
-import { KNOWN_NPM_TYPOSQUATS, KNOWN_PYPI_TYPOSQUATS } from "../rules/typosquat";
+import { KNOWN_NPM_TYPOSQUATS, KNOWN_PYPI_TYPOSQUATS } from "./typosquat";
 import { hasMalwareArtifactInIgnoreFile } from "./malwareArtifacts";
 import { shouldSkipPath } from "../utils/skipPaths";
 import { isBinaryPath, looksLikeJavaScript } from "../utils/binaryPath";
