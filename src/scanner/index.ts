@@ -463,8 +463,27 @@ export async function scanCommit({
   const findings: Finding[] = [];
   const filesToScan = [...addedFiles, ...modifiedFiles, ...renamedFiles];
 
+  // Fetch .repoguardignore if present at the current ref
+  let ignoredPaths: string[] = [];
+  try {
+    const { data: ignoreFile } = await octokit.request(
+      "GET /repos/{owner}/{repo}/contents/{path}",
+      { owner, repo, path: ".repoguardignore", ref: sha },
+    );
+    if (!Array.isArray(ignoreFile) && "content" in ignoreFile) {
+      const raw = Buffer.from(ignoreFile.content, "base64").toString("utf8");
+      ignoredPaths = raw
+        .split("\n")
+        .map((l) => l.trim())
+        .filter((l) => l && !l.startsWith("#"));
+    }
+  } catch {
+    // Ignore error if ignore file is not present
+  }
+
   for (const filePath of filesToScan) {
     if (shouldSkipPath(filePath)) continue;
+    if (ignoredPaths.some((p) => filePath.startsWith(p))) continue;
 
     const binary = isBinaryPath(filePath);
 
@@ -496,6 +515,7 @@ export async function scanCommit({
 
   // Flag deleted .env files — surface for review even on removal
   for (const filePath of removedFiles) {
+    if (ignoredPaths.some((p) => filePath.startsWith(p))) continue;
     const name = filePath.split("/").pop()?.toLowerCase() ?? "";
     if (name === ".env" || name.startsWith(".env.")) {
       findings.push({
