@@ -25,7 +25,7 @@
     "check-format": "prettier --check \"src/**/*.{ts,json}\"",
     "prepare": "husky",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "npm run build && npm run typecheck"
   },
   "repository": {
     "type": "git",

@@ -62,12 +62,12 @@ console.log(findings);
 
 ---
 
-## ⚙️ Repository Configuration (`repoguard.yml`)
+## ⚙️ Repository Configuration (`.repoguard.yml`)
 
-You can customize scanner behavior per-repository using a `repoguard.yml` file placed in the repository root.
+You can customize scanner behavior per-repository using a `.repoguard.yml` file placed in the repository root.
 
 ```yaml
-# repoguard.yml
+# .repoguard.yml
 rules:
   workflow-unpinned-action: off     # Disable specific non-critical rules
   hardcoded-secret: warn            # Change severity to medium
@@ -104,7 +104,7 @@ const findings = scanFileContentWithConfig(code, "script.js", config);
 
 ## 🛡️ Security & Bypass Protection
 
-To prevent malicious Pull Requests from disabling security scanning to sneak malware past RepoGuard, **critical malware and RCE rules cannot be disabled via `repoguard.yml`**.
+To prevent malicious Pull Requests from disabling security scanning to sneak malware past RepoGuard, **critical malware and RCE rules cannot be disabled via `.repoguard.yml`**.
 
 The following rules are protected and will always execute:
 - `curl-pipe-bash` (Remote Code Execution)
@@ -128,7 +128,7 @@ Scans file content string against all general code rules.
 Scans GitHub Actions workflow YAML for unpinned actions, `pull_request_target` abuses, and secret exfiltration.
 
 ### `parseRepoConfig(yamlContent: string): RepoConfig`
-Parses a `repoguard.yml` string into a structured configuration object.
+Parses a `.repoguard.yml` string into a structured configuration object.
 
 ### `applyRepoConfig(findings: Finding[], config?: RepoConfig): Finding[]`
 Applies repository configuration overrides, path exclusions, whitelist patterns, and severity filters to a list of findings.
