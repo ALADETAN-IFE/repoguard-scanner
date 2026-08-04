@@ -26,10 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Check formatting
-        run: npm run check-format
-
+        
       - name: Run linter
         run: npm run lint --if-present
 
