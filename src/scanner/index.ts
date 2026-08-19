@@ -69,6 +69,7 @@ const FILE_RULES: ScanRule[] = [
     test: (content) =>
       /var\s+_\$_\w+\s*=\s*\(?function/.test(content) ||
       /global\[['"]!['"]\]/.test(content) ||
+      /global\.(i|r|m)\s*=|global\[['"](i|r|m)['"]\]/.test(content) ||
       /global\[_\$_\w+\[\d+\]\]\s*=\s*require/.test(content),
   },
   {
@@ -99,9 +100,9 @@ const FILE_RULES: ScanRule[] = [
   {
     id: "js-obfuscated-hex",
     severity: "critical",
-    description: "JavaScript hex escape obfuscation sequence",
+    description: "JavaScript hex/unicode escape obfuscation sequence",
     test: (content): boolean => {
-      const matches = content.match(/\\x[0-9a-fA-F]{2}/g);
+      const matches = content.match(/\\(x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})/g);
       return matches !== null && matches.length >= 8;
     },
   },
