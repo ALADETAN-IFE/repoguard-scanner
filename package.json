@@ -1,6 +1,6 @@
 {
   "name": "@repoguard/scanner",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Security scanner for detecting malicious code patterns in repositories",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
