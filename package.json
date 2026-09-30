@@ -1,6 +1,6 @@
 {
   "name": "@repoguard/scanner",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Security scanner for detecting malicious code patterns in repositories",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -17,8 +17,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "node api.js && tsup",
+    "dev": "node api.js && tsup --watch",
     "test": "jest",
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.{ts,json}\"",
