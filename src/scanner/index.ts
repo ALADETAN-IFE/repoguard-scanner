@@ -65,12 +65,18 @@ const FILE_RULES: ScanRule[] = [
     id: "obfuscated-malware-pattern",
     severity: "critical",
     description:
-      "Suspicious obfuscated string array pattern or global require assignment",
+      "Suspicious obfuscated string array pattern, rotation loop, or global require assignment",
     test: (content) =>
       /var\s+_\$_\w+\s*=\s*\(?function/.test(content) ||
       /global\[['"]!['"]\]/.test(content) ||
       /global\.(i|r|m)\s*=|global\[['"](i|r|m)['"]\]/.test(content) ||
-      /global\[_\$_\w+\[\d+\]\]\s*=\s*require/.test(content),
+      /global\[_\$_\w+\[\d+\]\]\s*=\s*require/.test(content) ||
+      (/function\s+[a-zA-Z0-9_$]+\s*\(\s*\)\s*\{\s*(?:var|let|const)\s+[a-zA-Z0-9_$]+\s*=\s*\[[\s\S]*?\];[\s\S]*?return\s+[a-zA-Z0-9_$]+/s.test(
+        content,
+      ) &&
+        /\(function\s*\([a-zA-Z0-9_$,\s]*\)\s*\{[\s\S]*?(?:push|shift)[\s\S]*?\}\s*\(|\(function\s*\([a-zA-Z0-9_$,\s]*\)\s*\{[\s\S]*?(?:push|shift)[\s\S]*?\}\)\s*\(/s.test(
+          content,
+        )),
   },
   {
     id: "python-exec-compile",
@@ -154,6 +160,43 @@ const FILE_RULES: ScanRule[] = [
       const urlConcat =
         /['"`]\s*\+\s*process\.env\.(PASSWORD|SECRET|TOKEN|KEY|API)/i.test(content);
       return directExfil || bodyExfil || urlConcat;
+    },
+  },
+  {
+    id: "suspicious-npm-script-hijack",
+    severity: "critical",
+    description:
+      "package.json script hijacked to execute arbitrary JS file or chained payload",
+    test: (content, filePath): boolean => {
+      if (!filePath?.endsWith("package.json")) return false;
+      try {
+        const pkg = JSON.parse(content) as {
+          scripts?: Record<string, string>;
+        };
+        if (!pkg.scripts) return false;
+        return Object.values(pkg.scripts).some((script) => {
+          if (typeof script !== "string") return false;
+          // Detect chained execution: "node api.js && tsup", "node payload.js; build"
+          if (/\bnode\s+[\w./\\-]+\.js\s*(&&|;|\|\|)\s*/i.test(script)) return true;
+          // Detect arbitrary root-level node execution in build/dev/start/pre* scripts
+          if (
+            /\bnode\s+(?:\.\/)?[\w-]+\.js\b/i.test(script) &&
+            !/\b(?:scripts|bin|dist|tools|build|test|tests)\//i.test(script)
+          ) {
+            return true;
+          }
+          // Detect curl/wget/powershell/eval in scripts
+          if (
+            /\b(?:curl|wget|powershell|bash\s+-c|sh\s+-c)\b/i.test(script) ||
+            /\bnode\s+-e\b/i.test(script)
+          ) {
+            return true;
+          }
+          return false;
+        });
+      } catch {
+        return false;
+      }
     },
   },
   {
