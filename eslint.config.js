@@ -1,12 +1,22 @@
 // ============================================================
 // REPOGUARD — MANUAL REVIEW REQUIRED: eslint.config.js
+// Scanned: 2026-10-10T05:20:05.063Z
+// The following findings could NOT be automatically patched:
+//   [CRITICAL] js-obfuscated-hex: JavaScript hex/unicode escape obfuscation sequence
+//   [MEDIUM] high-entropy-secret: High-entropy string detected — possible hardcoded credential or API key
+// ============================================================
+
+// ============================================================
+// REPOGUARD — MANUAL REVIEW REQUIRED: eslint.config.js
 // Scanned: 2026-10-10T05:19:10.038Z
 // The following findings could NOT be automatically patched:
 //   [MEDIUM] high-entropy-secret: High-entropy string detected — possible hardcoded credential or API key
 // ============================================================
 
-const tsParser = require("@typescript-eslint/parser");
-const tsPlugin = require("@typescript-eslint/eslint-plugin");
+// REMOVED BY REPOGUARD: obfuscated malware alias
+("@typescript-eslint/parser");
+// REMOVED BY REPOGUARD: obfuscated malware alias
+("@typescript-eslint/eslint-plugin");
 
 module.exports = [
   // Files/paths to ignore (replaces .eslintignore usage in flat config)
