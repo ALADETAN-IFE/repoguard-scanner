@@ -16,7 +16,14 @@ permissions:
   contents: read
 
 jobs:
+  repoguard-security-scan:
+    uses: ./.github/workflows/repoguard-security-scan.yml
+    permissions:
+      contents: read
+    with:
+      ref: ${{ github.event.inputs.tag || github.ref }}
   publish:
+    needs: [repoguard-security-scan]
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment: npm

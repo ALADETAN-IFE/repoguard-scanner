@@ -1,0 +1,27 @@
+name: RepoGuard security scan
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: "Git ref to scan"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: RepoGuard Pre-Execution Security Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+      - name: Run RepoGuard Security Check
+        uses: ALADETAN-IFE/repoguard-action@1f5947a155f654749155b712564e6cb0c45e63b7 # v1
+        with:
+          minimum-severity: medium
+          fail-on: high
