@@ -171,7 +171,7 @@ const FILE_RULES: ScanRule[] = [
     severity: "critical",
     description: "Encoded PowerShell command — common Windows malware vector",
     test: (content) =>
-      /powershell.*-[Ee]nc(odedCommand)?|\bpowershell\b.*-[Ee]\s+[A-Za-z0-9+/]{20,}/.test(
+      /\bpowershell(?:\.exe)?\s+.*-[Ee]nc(?:odedCommand)?|\bpowershell(?:\.exe)?\s+.*-[Ee]\s+[A-Za-z0-9+/]{20,}/.test(
         content,
       ),
   },
