@@ -16,7 +16,12 @@ permissions:
   contents: write
 
 jobs:
+  repoguard-security-scan:
+    uses: ./.github/workflows/repoguard-security-scan.yml
+    permissions:
+      contents: read
   bump:
+    needs: [repoguard-security-scan]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
